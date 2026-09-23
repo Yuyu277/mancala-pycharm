@@ -3,18 +3,17 @@ board = [0, 4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4]
 def print_board(board):
     print("   13    12    11    10    9    8")
     print("-"*35)
-    rowB = "     ".join(str(x) for x in board[1:7])
+    rowB = ("     ".join(str(x) for x in board[8:14]))[::-1]
     print("B: " + rowB)
     print(str(board[0]) + "                                  " + str(board[7]))
-    rowA = "     ".join(str(x) for x in board[8:14])
+    rowA = "     ".join(str(x) for x in board[1:7])
     print("A: " + rowA)
     print("-"*35)
     print("   1     2     3     4     5     6")
 
-playerATurn = True
 def is_valid_move(move_num):
-    if(move_num>=1 and move_num<=6 and playerATurn or move_num>=8 and moveNum<=13 and not playerATurn):
-        if(board(move_num) > 0):
+    if(move_num>=1 and move_num<=6 and playerATurn or move_num>=8 and move_num<=13 and not playerATurn):
+        if(board[move_num] > 0):
             return True
         else:
             return False
@@ -22,7 +21,16 @@ def is_valid_move(move_num):
         return False
 
 def move_stones(move_num):
-    print("moved")
+    move_amt = board[move_num]
+    board[move_num] = 0
+    for i in range(move_amt):
+        board_on = (move_num + 1 + i)/14
+        if playerATurn and board_on == 0 or not playerATurn and board_on == 7:
+            #left off here
+            i += 1
+            board_on = (move_num + 1 + i) / 14
+        board[board_on] += 1
+    print_board(board)
 
 
 def take_turn():
@@ -41,5 +49,9 @@ def take_turn():
             print("Invalid move! Try again.")
             users_move = int(input("Your move: "))
 
+#running stuff
+playerATurn = True
 print_board(board)
-take_turn()
+while True:
+    take_turn()
+    playerATurn = not playerATurn
