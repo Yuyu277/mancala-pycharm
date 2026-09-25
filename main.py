@@ -3,7 +3,7 @@ board = [0, 4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4]
 def print_board(board):
     print("   13    12    11    10    9    8")
     print("-"*35)
-    rowB = ("     ".join(str(x) for x in board[8:14]))[::-1]
+    rowB = ("     ".join(str(x) for x in board[8:14][::-1]))
     print("B: " + rowB)
     print(str(" " + str(board[0])) + "                                  " + str(board[7]))
     rowA = "     ".join(str(x) for x in board[1:7])
@@ -46,7 +46,7 @@ def move_stones(move_num):
                 board[0] += board[(move_num + i) % 14] + board[(14 - move_num - i) % 14]
             board[(move_num + i) % 14] = 0
             board[(14 - move_num - i) % 14] = 0
-    if playerATurn and (move_num + i) % 14 == 7 or not playerATurn and (move_num + i) % 14 == 0 and not game_over():
+    if playerATurn and (move_num + i) % 14 == 7 and not game_over() or not playerATurn and (move_num + i) % 14 == 0 and not game_over():
         clear_screen()
         print_board(board)
         take_turn()
@@ -71,7 +71,7 @@ def take_turn():
             users_move = int(input("Your move: "))
 
 def game_over():
-    if board[1:7] == 0 or board[8:14] == 0:
+    if all(pit == 0 for pit in board[1:7]) or all(pit==0 for pit in board[8:14]):
         return True
     return False
 
@@ -93,6 +93,7 @@ while True:
     take_turn()
     playerATurn = not playerATurn
     if game_over():
+        clear_screen()
         print("Game Over! ")
         break
 calculate_winner()
