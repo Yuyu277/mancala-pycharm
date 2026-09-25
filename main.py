@@ -11,6 +11,10 @@ def print_board(board):
     print("-"*35)
     print("   1     2     3     4     5     6")
 
+def clear_screen():
+    for i in range (10):
+        print()
+
 def is_valid_move(move_num):
     if 1 <= move_num <= 6 and playerATurn or 8 <= move_num <= 13 and not playerATurn:
         if board[move_num] > 0:
@@ -34,7 +38,7 @@ def move_stones(move_num):
         move_amt -= 1
     #steal
     if board[(move_num + i) % 14] - 1 == 0 and not board[(14 - move_num - i) % 14] == 0 and not (14 - move_num - i) % 14 == 7 and not (14 - move_num - i) % 14 == 0:
-        if playerATurn and (move_num + 1) % 14 < 7 or not playerATurn and (move_num + 1) % 14 > 7:
+        if playerATurn and (move_num + i) % 14 < 7 or not playerATurn and (move_num + i) % 14 > 7:
             print("Steal!!!")
             if playerATurn:
                 board[7] += board[(move_num + i) % 14] + board[(14 - move_num - i) % 14]
@@ -42,9 +46,11 @@ def move_stones(move_num):
                 board[0] += board[(move_num + i) % 14] + board[(14 - move_num - i) % 14]
             board[(move_num + i) % 14] = 0
             board[(14 - move_num - i) % 14] = 0
-    if playerATurn and (move_num + i) % 14 == 7 or not playerATurn and (move_num + i) % 14 == 0:
+    if playerATurn and (move_num + i) % 14 == 7 or not playerATurn and (move_num + i) % 14 == 0 and not game_over():
+        clear_screen()
         print_board(board)
         take_turn()
+    clear_screen()
     print_board(board)
 
 
@@ -64,9 +70,29 @@ def take_turn():
             print("Invalid move! Try again.")
             users_move = int(input("Your move: "))
 
+def game_over():
+    if board[1:7] == 0 or board[8:14] == 0:
+        return True
+    return False
+
+def calculate_winner():
+    board[0] += sum(board[8:14])
+    board[7] += sum(board[1:7])
+    board[8:14] = [0] * 6
+    board[1:7] = [0] * 6
+    print_board(board)
+    if board[0] > board[7]:
+        print("Player B's wins! ")
+    else:
+        print("Player A's wins! ")
+
 #running
 playerATurn = True
 print_board(board)
 while True:
     take_turn()
     playerATurn = not playerATurn
+    if game_over():
+        print("Game Over! ")
+        break
+calculate_winner()
